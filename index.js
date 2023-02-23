@@ -5,7 +5,11 @@ const axios = require("axios");
 const cors = require("cors");
 const app = express();
 const moment = require("moment");
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 const getData = async (url) => {
   try {
@@ -44,7 +48,6 @@ const handleData = async (type, interval) => {
   if (interval === "60m" || interval === "4h") {
     url = `https://query1.finance.yahoo.com/v8/finance/chart/${type}?symbol=${type}&range=6mo&useYfid=true&interval=60m&includePrePost=true&events=div%7Csplit%7Cearn&lang=en-US&region=US&crumb=1zVdVRLIadN&corsDomain=finance.yahoo.com`;
   }
-  console.log("url", url);
   let data;
   try {
     data = await getData(url);
@@ -72,9 +75,7 @@ const handleData = async (type, interval) => {
       currentPrice: 0,
       time: moment(period2 * 1000).format("MM-DD-YYYY:HHmmss"),
     };
-  const values = data.chart.result[0].indicators.quote[0].close
-    .filter((item) => item)
-    .slice(-20);
+  const values = data.chart.result[0].indicators.quote[0].close.filter((item) => item).slice(-20);
 
   const time = moment(period2 * 1000).format("MM-DD-YYYY:HHmmss");
   const period = 20;
