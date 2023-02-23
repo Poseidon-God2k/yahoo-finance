@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="node_modules/babel-polyfill/browser.js"></script>
+    <script src="node_modules/technicalindicators/dist/browser.js"></script>
+  </head>
+  <body>
+    <form>
+      <label for="type">Type of Chart:</label><br />
+      <input type="text" id="type" name="type" />
+      <br />
+      <br />
+      <label for="intervals">Choose type interval:</label>
+      <br />
+      <select name="intervals" id="intervals">
+        <option value="1m">1 min</option>
+        <option value="2m">2 mins</option>
+        <option value="5m">5 mins</option>
+        <option value="15m">15 mins</option>
+        <option value="60m">1 hour</option>
+        <option value="4h">4 hours</option>
+        <option value="1d">1 day</option>
+        <option value="1w">1 week</option>
+        <option value="1m">1 month</option>
+      </select>
+      <br />
+      <br />
+      <input type="submit" value="Submit" />
+      <br />
+      <div id="content"></div>
+    </form>
+    <script>
+      const form = document.querySelector("form");
+
+      const getData = async (url) => {
+        try {
+          const response = await axios.get(url);
+          return response.data;
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      let interValId;
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        clearInterval(interValId);
+        const type = document.querySelector("#type").value;
+        const interval = document.querySelector("#intervals").value;
+
+        const url = `http://51.79.145.110:8111/chart?type=${type}&interval=${interval}`;
+        interValId = setInterval(() => {
+          console.log("calling", url);
+          getData(url).then((data) => {
+            document.getElementById("content").innerHTML = `<div>
+                  ${data.time},PRICE:${data.currentPrice.toFixed(2)},UB3:${data.BB3.upper.toFixed(
+              2
+            )},UB2:${data.BB2.upper.toFixed(2)},UB1:${data.BB1.upper.toFixed(
+              2
+            )},MEAN:${data.BB1.middle.toFixed(2)},LB1:${data.BB1.lower.toFixed(
+              2
+            )},LB2:${data.BB2.lower.toFixed(2)},LB3:${data.BB3.lower.toFixed(2)}
+              <div>`;
+          });
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>
