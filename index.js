@@ -2,14 +2,11 @@ const express = require("express");
 
 const BB = require("technicalindicators").BollingerBands;
 const axios = require("axios");
-const cors = require("cors");
 const app = express();
 const moment = require("moment");
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+var cors = require("cors");
+app.use(express.json());
+app.use(cors());
 
 const getData = async (url) => {
   try {
